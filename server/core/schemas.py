@@ -1,10 +1,6 @@
-from sqlalchemy import create_engine
-
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.orm import relationship, DeclarativeBase
-
-class Base(DeclarativeBase):
-    pass
+from sqlalchemy.orm import relationship
+from core.db import Base
 
 class User(Base):
     __tablename__ = 'users'
@@ -38,10 +34,3 @@ class Contribution(Base):
 
     total_commits = Column(Integer)
     date = Column(Date)
-
-
-
-connection_string = "mysql+mysqlconnector://bolt:bolt@localhost:3306/lancer"
-engine = create_engine(connection_string, echo=True)
-
-Base.metadata.create_all(engine)

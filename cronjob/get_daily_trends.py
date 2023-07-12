@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
 from utils import combine_dictionaries
-from db import *
+from server.core.db import *
 import sqlalchemy as sa
 
 engine = sa.create_engine("mysql+mysqlconnector://bolt:bolt@localhost:3306/lancer")

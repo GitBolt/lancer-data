@@ -2,18 +2,18 @@
 def lang_to_ext(extension):
   programming_languages = {
       "ts": "Typescript",
-      "js": "JavaScript",
+      "js": "Javascript",
       "css": "CSS",
       "html": "HTML",
       "py": "Python",
       # "rb": "Ruby",
-      "go": "Go",
+      "go": "Golang",
       # "java": "Java",
       "rs": "Rust",
       "sol": "Solidity",
       # "cs": "C#",
       "c": "C",
-      "cpp": "C++",
+      "cpp": "CPP",
       # "h": "C++",
       # "json": "JSON",
   }
