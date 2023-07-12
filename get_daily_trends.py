@@ -5,6 +5,11 @@ import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
 from utils import combine_dictionaries
+from db import *
+import sqlalchemy as sa
+
+engine = sa.create_engine("mysql+mysqlconnector://bolt:bolt@localhost:3306/lancer")
+session = sa.orm.Session(engine)
 
 
 load_dotenv()
@@ -61,21 +66,31 @@ for idx, user in enumerate(json_data):
                 else:
                     language_details = combine_dictionaries(language_details, lang_breakdown)
                 today_commit_count += 1
-    
-    # Update the daily count for today
-    daily_count[str(today)] = today_commit_count
+            
     print("Lang Details: ", language_details, "\n")
-    if existing_contribs:
-        new_contributions = existing_contribs.append(language_details)
-    else:
-        new_contributions = [language_details]
-    data[github_name] = {
-        "contact_info": contact_info,
-        "daily_count": daily_count,
-        "total_commits": user["total_commits"],
-        "contributions": new_contributions
-    }
 
-    with open('daily_count.json', 'w') as json_file:
-        json.dump(data, json_file, indent=4)
+    user = session.query(User).filter_by(github_name=github_name).first()
+
+
+    language_details_simple = {}
+    for language, contributions in language_details.items():
+        if language == "date": continue
+        additions = contributions["additions"]
+        deletions = contributions["deletions"]
+        language_details_simple[language] = additions + deletions
+
+    if user is not None:
+        contribution = Contribution(date=today, total_commits=today_commit_count, **language_details_simple)
+        contribution.user = user
+        session.add(contribution)
+        session.commit()
+    else:
+        user = User(
+            github_name=github_name,
+            **contact_info
+            )
+        contribution = Contribution(date=today, **language_details_simple)
+        user.contributions.append(contribution)
+        session.add(user)
+        session.commit()
     

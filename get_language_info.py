@@ -6,16 +6,16 @@ def lang_to_ext(extension):
       "css": "CSS",
       "html": "HTML",
       "py": "Python",
-      "rb": "Ruby",
+      # "rb": "Ruby",
       "go": "Go",
-      "java": "Java",
+      # "java": "Java",
       "rs": "Rust",
       "sol": "Solidity",
-      "cs": "C#",
+      # "cs": "C#",
       "c": "C",
       "cpp": "C++",
-      "h": "C++",
-      "json": "JSON",
+      # "h": "C++",
+      # "json": "JSON",
   }
 
   return programming_languages.get(extension, None)
