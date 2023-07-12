@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-load_dotenv
+load_dotenv()
 
 def initialize_engine() -> Callable:
     try:
-        return create_engine(os.environ["POSTGRESQL_URL"])
+        return create_engine(os.environ["DB_URL"])
     except KeyError:
         print(
             "'DB_URL' environment variable not found,",
