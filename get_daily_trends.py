@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
-from collections import Counter
 from utils import combine_dictionaries
 
 
@@ -18,7 +17,7 @@ headers = {"Authorization": f"token {github_key}"}
 with open('data.json') as json_file:
     json_data = json.load(json_file)
 
-print(len(json_data), "Devs")
+print("Devs Count: ", len(json_data))
 
 data = {}
 
@@ -28,7 +27,7 @@ today = datetime.utcnow().date() - timedelta(days=2)
 for idx, user in enumerate(json_data):
     github_name = user["github_name"]
 
-    print(f"Fetching for {github_name}. [{idx}/{len(json_data)}]")
+    print(f"Fetching for {github_name} [{idx}/{len(json_data)}]")
     gh_name = user["contact_info"]["name"]
     contact_info = user["contact_info"]
     
@@ -56,7 +55,6 @@ for idx, user in enumerate(json_data):
             for commit in event["payload"]["commits"]:
                 commit_res = requests.get(commit["url"], headers=headers)
                 commit_info = commit_res.json()
-                
                 lang_breakdown = get_language_breakdown(commit_info)
                 if not language_details:
                     language_details = lang_breakdown
@@ -66,7 +64,7 @@ for idx, user in enumerate(json_data):
     
     # Update the daily count for today
     daily_count[str(today)] = today_commit_count
-
+    print("Lang Details: ", language_details, "\n")
     if existing_contribs:
         new_contributions = existing_contribs.append(language_details)
     else:
