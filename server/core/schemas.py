@@ -14,7 +14,7 @@ class User(Base):
     twitter = Column(String(50))
     website = Column(String(100))
     location = Column(String(100))
-
+    date = Column(Date, default=datetime.utcnow)
     contributions = relationship('Contribution', backref='user')
 
 
@@ -25,4 +25,5 @@ class Contribution(Base):
   user_id = Column(Integer, ForeignKey('user.id'))
   total_commits = Column(Integer)
   breakdown = Column(JSON)
+  total_lines = Column(Integer)
   date = Column(Date, default=datetime.utcnow)

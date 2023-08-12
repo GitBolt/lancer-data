@@ -28,55 +28,66 @@ print("Devs Count: ", len(json_data))
 data = {}
 
 # Get today's date in UTC
-today = datetime.utcnow().date() - timedelta(days=34)
 
-for idx, user in enumerate(json_data):
-    github_name = user["github_name"]
+dates = []
+for i in range(10):
+    dates.append(datetime.utcnow().date() - timedelta(days=i + 10))
 
-    print(f"Fetching for {github_name} [{idx}/{len(json_data)}]")
-    gh_name = user["contact_info"]["name"]
-    contact_info = user["contact_info"]
+for today in dates:
+    print(today)
+    for idx, user in enumerate(json_data):
+        github_name = user["github_name"]
 
-    try:
-        url = f'https://api.github.com/users/{github_name}/events'
-        response = requests.get(url, headers=headers)
-        events = response.json()
+        print(f"Fetching for {github_name} [{idx}/{len(json_data)}]")
+        gh_name = user["contact_info"]["name"]
+        contact_info = user["contact_info"]
 
-        today_commit_count = 0
-        
-        language_details = {}
+        try:
+            url = f'https://api.github.com/users/{github_name}/events'
+            response = requests.get(url, headers=headers)
+            print(response)
+            events = response.json()
 
-        # All the times user enter git push. A single push can have multiple commits (oof)
-        for event in [e for e in events if e["type"] == "PushEvent"]:
-            created_date = event["created_at"].split("T")[0] # Push date, not commit date
-            event_date = datetime.fromisoformat(created_date).date()
+            today_commit_count = 0
+            
+            language_details = {}
 
-            if event_date == today: # Pushes for only today
-                
-                for commit in event["payload"]["commits"]:
-                    commit_res = requests.get(commit["url"], headers=headers)
-                    commit_info = commit_res.json()
-                    lang_breakdown = get_language_breakdown(commit_info)
-                    if not language_details:
-                        language_details = lang_breakdown
-                    else:
-                        language_details = combine_dictionaries(language_details, lang_breakdown)
-                    today_commit_count += 1
-                
-        print("Lang Details: ", language_details, "\n")
+            # All the times user enter git push. A single push can have multiple commits (oof)
+            for event in [e for e in events if e["type"] == "PushEvent"]:
+                created_date = event["created_at"].split("T")[0] # Push date, not commit date
+                event_date = datetime.fromisoformat(created_date).date()
 
-        user = session.query(User).filter_by(github_name=github_name).first()
+                if event_date == today: # Pushes for only today
+                    
+                    for commit in event["payload"]["commits"]:
+                        commit_res = requests.get(commit["url"], headers=headers)
+                        commit_info = commit_res.json()
+                        lang_breakdown = get_language_breakdown(commit_info)
+                        if not language_details:
+                            language_details = lang_breakdown
+                        else:
+                            language_details = combine_dictionaries(language_details, lang_breakdown)
+                        today_commit_count += 1
+                    
+            print("Lang Details: ", language_details, "\n")
 
-        if user is None:
-            user = User(
-                github_name=github_name,
-                **contact_info
-                )  
+            user = session.query(User).filter_by(github_name=github_name).first()
 
-        if language_details != {}:
-            contribution = Contribution(total_commits=today_commit_count, breakdown=language_details)
-            contribution.user = user
-            session.add(contribution)
-        session.commit()
-    except:
-        continue
+            if user is None:
+                user = User(
+                    github_name=github_name,
+                    **contact_info
+                    )  
+
+            if language_details != {}:
+                contribution = Contribution(
+                    date=today,
+                    total_commits=today_commit_count, 
+                    breakdown=language_details, 
+                    total_lines=sum((language_data.get("additions", 0) + language_data.get("deletions", 0)) for language_data in language_details.values())
+                    )
+                contribution.user = user
+                session.add(contribution)
+            session.commit()
+        except:
+            continue
