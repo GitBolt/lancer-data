@@ -1,21 +1,21 @@
 
 def lang_to_ext(extension):
   programming_languages = {
-      "ts": "Typescript",
-      "js": "Javascript",
-      "css": "CSS",
-      "html": "HTML",
-      "py": "Python",
-      # "rb": "Ruby",
-      "go": "Golang",
-      # "java": "Java",
-      "rs": "Rust",
-      "sol": "Solidity",
-      # "cs": "C#",
-      "c": "C",
-      "cpp": "CPP",
-      # "h": "C++",
-      # "json": "JSON",
+      "ts": "typescript",
+      "js": "javascript",
+      "css": "css",
+      "html": "html",
+      "py": "python",
+      "rb": "ruby",
+      "go": "golang",
+      "java": "java",
+      "rs": "rust",
+      "sol": "solidity",
+      "cs": "c#",
+      "c": "c",
+      "cpp": "cpp",
+      "h": "cpp",
+      "json": "json",
   }
 
   return programming_languages.get(extension, None)
@@ -23,7 +23,7 @@ def lang_to_ext(extension):
 def get_language_breakdown(commit_data):
   languages_used = {}
   for file in commit_data["files"]:
-      filename, extension = file["filename"].rsplit(".", 1)
+      _filename, extension = file["filename"].rsplit(".", 1)
 
       language = lang_to_ext(extension)
       if language is None:
