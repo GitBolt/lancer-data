@@ -9,29 +9,6 @@ from sqlalchemy import func, text
 
 router = APIRouter(prefix="/ranking")
 
-@router.get("/commits")
-def get_top_users(
-    session: Session = Depends(get_db),
-    start_date: str = None,
-    till: int = 7,
-    limit: int = 5 ,
-):
-
-    start_date = datetime.strptime(start_date, "%Y-%m-%d") if start_date else datetime.today() - timedelta(days=1)
-    end_date = start_date + timedelta(days=till)
-
-    top_users = (
-        session.query(User)
-        .join(Contribution, User.id == Contribution.user_id)
-        .filter(Contribution.date >= start_date, Contribution.date < end_date)
-        .group_by(User.id)
-        .order_by(func.sum(Contribution.total_commits).desc())
-        .limit(limit)
-        .all()
-    )
-
-    return top_users
-
 
 @router.get("/top_devs/language")
 async def get_top_users_for_language(
