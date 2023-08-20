@@ -41,6 +41,8 @@ for today in dates:
         print(f"Fetching for {github_name} [{idx}/{len(json_data)}]")
         gh_name = user["contact_info"]["name"]
         contact_info = user["contact_info"]
+        del contact_info["website"]
+        del contact_info["location"]
 
         try:
             url = f'https://api.github.com/users/{github_name}/events'
@@ -71,23 +73,27 @@ for today in dates:
                     
             print("Lang Details: ", language_details, "\n")
 
-            user = session.query(User).filter_by(github_name=github_name).first()
-
+            user = session.query(User).filter_by(githubId=github_name).first()
             if user is None:
+                print("Adding User")
                 user = User(
-                    github_name=github_name,
+                    githubId=github_name,
                     **contact_info
                     )  
+                session.add(user)
+                session.flush()
 
             if language_details != {}:
                 contribution = Contribution(
-                    date=today,
+                    user_id = user.id,
                     total_commits=today_commit_count, 
                     breakdown=language_details, 
-                    total_lines=sum((language_data.get("additions", 0) + language_data.get("deletions", 0)) for language_data in language_details.values())
+                    total_lines=sum((language_data.get("additions", 0) + language_data.get("deletions", 0)) for language_data in language_details.values()),
+                    date=today,
                     )
-                contribution.user = user
+
                 session.add(contribution)
-            session.commit()
-        except:
+            res = session.commit()
+        except Exception as e:
+            print(e)
             continue

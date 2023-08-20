@@ -18,21 +18,28 @@ async def get_top_users_for_language(
     till: int = 7,
     limit: int = 5
 ):
-    start_date = datetime.strptime(start_date, "%Y-%m-%d") if start_date else datetime.today() - timedelta(days=1)
-    end_date = start_date + timedelta(days=till)
+    start = datetime.strptime(start_date, "%Y-%m-%d").date() if start_date else datetime.today() - timedelta(days=1)
+    end_date = start + timedelta(days=till)
 
+    print(start, end_date)
+
+    data = session.query(Contribution).all()
+
+    for i in data:
+        print(i.date)
+        
     query = text("""
-        SELECT u.id, u.github_name, SUM((c.breakdown->:language->>'additions')::integer) AS total_additions
-        FROM "user" u
-        JOIN "contribution" c ON u.id = c.user_id
+        SELECT u.id, u.githubId, SUM(CAST(JSON_UNQUOTE(JSON_EXTRACT(c.breakdown, CONCAT('$.', :language, '.additions'))) AS SIGNED)) AS total_additions
+        FROM `User` u
+        JOIN `Contribution` c ON u.id = c.user_id
         WHERE c.date >= :start_date AND c.date <= :end_date
-        GROUP BY u.id, u.github_name
-        HAVING SUM((c.breakdown->:language->>'additions')::integer) > 0
+        GROUP BY u.id, u.githubId
+        HAVING total_additions > 0
         ORDER BY total_additions DESC
         LIMIT :limit;
     """)
 
-    result = session.execute(query, {"language": language, "start_date": start_date, "end_date": end_date, "limit": limit})
+    result = session.execute(query, {"language": language, "start_date": start, "end_date": end_date, "limit": limit})
 
     data = result.fetchall()
     output_data = [
@@ -66,7 +73,7 @@ async def get_top_users_for_language(
     result = []
     for user, total_lines in top_x:
         result.append({
-            "username": user.github_name,
+            "username": user.githubId,
             "total_lines": total_lines,
         })
 
@@ -96,7 +103,7 @@ async def get_top_users_for_language(
     result = []
     for user, total_commits in top_x:
         result.append({
-            "username": user.github_name,
+            "username": user.githubId,
             "total_commits": total_commits,
         })
 
