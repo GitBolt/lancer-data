@@ -57,13 +57,15 @@ async def get_top_users_for_language(
     till: int = 7,
     limit: int = 5
 ):
-    start_date = datetime.strptime(start_date, "%Y-%m-%d") if start_date else datetime.today() - timedelta(days=1)
-    end_date = start_date + timedelta(days=till)
+    start = datetime.strptime(start_date, "%Y-%m-%d").date() if start_date else datetime.today() - timedelta(days=1)
+    end_date = start + timedelta(days=till)
+
+    print(start, end_date)
 
     top_x = (
         session.query(User, func.sum(Contribution.total_lines))
         .join(Contribution)
-        .filter(Contribution.date >= start_date, Contribution.date < end_date)
+        .filter(Contribution.date >= start_date, Contribution.date <= end_date)
         .group_by(User)
         .order_by(func.sum(Contribution.total_lines).desc())
         .limit(limit)
@@ -87,13 +89,15 @@ async def get_top_users_for_language(
     till: int = 7,
     limit: int = 5
 ):
-    start_date = datetime.strptime(start_date, "%Y-%m-%d") if start_date else datetime.today() - timedelta(days=1)
-    end_date = start_date + timedelta(days=till)
+    start = datetime.strptime(start_date, "%Y-%m-%d").date() if start_date else datetime.today() - timedelta(days=1)
+    end_date = start + timedelta(days=till)
+
+    print(start, end_date)
 
     top_x = (
         session.query(User, func.sum(Contribution.total_commits))
         .join(Contribution)
-        .filter(Contribution.date >= start_date, Contribution.date < end_date)
+        .filter(Contribution.date >= start_date, Contribution.date <= end_date)
         .group_by(User)
         .order_by(func.sum(Contribution.total_commits).desc())
         .limit(limit)
