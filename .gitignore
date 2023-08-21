@@ -1,4 +1,4 @@
 .env
-*.json
+data.json
 repos.csv
 __pycache__
