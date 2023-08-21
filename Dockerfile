@@ -9,6 +9,6 @@ RUN pip install uvicorn python-dotenv requests SQLAlchemy fastapi mysql-connecto
 
 COPY . /app
 
-CMD uvicorn main:app --port $PORT
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
 
 # mysqlclient mysql-connector-python 
