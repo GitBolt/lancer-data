@@ -1,7 +1,7 @@
 FROM python:3.8-slim
 
 COPY /server /root
-COPY server/new_data.json /root
+COPY /server/new_data.json /root
 
 WORKDIR /root
 
