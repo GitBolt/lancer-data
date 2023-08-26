@@ -75,8 +75,8 @@ async def get_top_users_for_language(
     result = []
     for user, total_lines in top_x:
         result.append({
-            "username": user.githubId,
-            "total_lines": total_lines,
+            "name": user.githubId,
+            "lines_added": total_lines,
         })
 
     return result
