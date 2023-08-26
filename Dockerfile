@@ -9,4 +9,4 @@ RUN pip install uvicorn python-dotenv requests SQLAlchemy fastapi mysql-connecto
 
 COPY . /app
 
-CMD python get_language_info.py
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
