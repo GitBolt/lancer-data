@@ -103,6 +103,7 @@ def main():
 schedule.every().day.at("22:55").do(main)
 
 # Run the scheduled tasks
+print(datetime.utcnow())
 print("Script Started")
 while True:
     schedule.run_pending()
