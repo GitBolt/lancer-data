@@ -1,6 +1,6 @@
 import json
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
