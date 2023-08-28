@@ -100,7 +100,7 @@ def main():
     print("Done For Today: ", today)
 
 # Schedule the task to run every day at 3pm IST
-schedule.every().day.at("22:55").do(main)
+schedule.every().day.at("17:32").do(main)
 
 # Run the scheduled tasks
 print(datetime.utcnow())
