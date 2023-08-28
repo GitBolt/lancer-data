@@ -58,7 +58,7 @@ def main():
             for event in [e for e in events if e["type"] == "PushEvent"]:
                 created_date = event["created_at"].split("T")[0] # Push date, not commit date
                 event_date = datetime.fromisoformat(created_date).date()
-                if event_date == today.date(): # Pushes for only today
+                if event_date == today: # Pushes for only today
                     
                     for commit in event["payload"]["commits"]:
                         commit_res = requests.get(commit["url"], headers=headers)
@@ -88,7 +88,7 @@ def main():
                     total_commits=today_commit_count, 
                     breakdown=language_details, 
                     total_lines=sum((language_data.get("additions", 0) + language_data.get("deletions", 0)) for language_data in language_details.values()),
-                    date=today.date(),
+                    date=today,
                     )
 
                 session.add(contribution)
@@ -100,11 +100,11 @@ def main():
     print("Done For Today: ", today)
 
 # Schedule the task to run every day at 3pm IST
-schedule.every().day.at("17:32").do(main)
+schedule.every().day.at("17:38").do(main)
 
 # Run the scheduled tasks
-print(datetime.utcnow())
-print("Script Started")
+print()
+print("Script Started. Server Time: ", datetime.utcnow())
 while True:
     schedule.run_pending()
     time.sleep(1)
