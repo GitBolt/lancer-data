@@ -1,9 +1,4 @@
-FROM python:3.8-slim
-
-COPY /server /root
-COPY /server/dev_data.json /root
-
-WORKDIR /root
+FROM python:3.8
 
 RUN pip install uvicorn python-dotenv requests SQLAlchemy fastapi mysql-connector-python
 
