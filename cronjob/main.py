@@ -24,7 +24,7 @@ github_key2 = os.getenv("GH_KEY2")
 headers = {"Authorization": f"token {github_key}"}
 
 def main():
-    with open('new_data.json') as json_file:
+    with open('dev_data.json') as json_file:
         json_data = json.load(json_file)
 
         print("Devs Count: ", len(json_data))

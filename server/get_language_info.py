@@ -11,7 +11,7 @@ def lang_to_ext(extension):
       "java": "java",
       "rs": "rust",
       "sol": "solidity",
-      "cs": "c#",
+      "cs": "csharp",
       "c": "c",
       "cpp": "cpp",
       "h": "cpp",
