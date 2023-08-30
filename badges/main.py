@@ -44,7 +44,7 @@ def main():
     print("Language Ranking Done. Doing for commit ranking...")
     assign_commit_badges()
 
-schedule.every().week.at("12:00").do(main)
+schedule.every().day.at("12:00").do(main)
 print("Script Started. Server Time: ", datetime.utcnow())
 while True:
     schedule.run_pending()
