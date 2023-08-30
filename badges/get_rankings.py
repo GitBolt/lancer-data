@@ -35,7 +35,7 @@ def get_top_users_by_commit():
     return {"devs": result, "week": date_range}
 
 
-def get_top_devs_by_lang(language) -> list[User]:
+def get_top_devs_by_lang(language):
     start = datetime.today().date() - timedelta(days=7)
     end_date = start + timedelta(days=7)
 
