@@ -29,28 +29,41 @@ async def get_top_users_for_language(
         print(i.date)
         
     query = text("""
-        SELECT u.id, u.githubId, SUM(CAST(JSON_UNQUOTE(JSON_EXTRACT(c.breakdown, CONCAT('$.', :language, '.additions'))) AS SIGNED)) AS total_additions
-        FROM `User` u
-        JOIN `Contribution` c ON u.id = c.user_id
-        WHERE c.date >= :start_date AND c.date <= :end_date
-        GROUP BY u.id, u.githubId
-        HAVING total_additions > 0
-        ORDER BY total_additions DESC
-        LIMIT :limit;
+            SELECT
+                u.id,
+                u.githubId,
+                SUM(
+                    CAST(JSON_UNQUOTE(JSON_EXTRACT(c.breakdown, CONCAT('$.', :language, '.additions'))) AS SIGNED) +
+                    CAST(JSON_UNQUOTE(JSON_EXTRACT(c.breakdown, CONCAT('$.', :language, '.deletions'))) AS SIGNED)
+                ) AS total_changes
+            FROM
+                `User` u
+            JOIN
+                `Contribution` c ON u.id = c.user_id
+            WHERE
+                c.date >= :start_date AND c.date <= :end_date
+            GROUP BY
+                u.id, u.githubId
+            HAVING
+                total_changes > 0
+            ORDER BY
+                total_changes DESC
+            LIMIT
+                :limit;
     """)
 
     result = session.execute(query, {"language": language, "start_date": start, "end_date": end_date, "limit": limit})
 
     data = result.fetchall()
     output_data = [
-        {"name": name, "rank": rank, "lines_added": lines_added, "user_id": user_id}
-        for rank, (user_id, name, lines_added) in enumerate(sorted(data, key=lambda x: x[2], reverse=True), start=1)
+        {"github_name": name, "lines_contributed": lines_contributed, "user_id": user_id}
+        for _, (user_id, name, lines_contributed) in enumerate(sorted(data, key=lambda x: x[2], reverse=True), start=1)
     ]
    
     return output_data
 
 
-@router.get("/top_devs/all")
+@router.get("/top_devs/all_languages")
 async def get_top_users_for_language(
     session: Session = Depends(get_db),
     start_date: str = None,
@@ -75,8 +88,8 @@ async def get_top_users_for_language(
     result = []
     for user, total_lines in top_x:
         result.append({
-            "name": user.githubId,
-            "lines_added": total_lines,
+            "github_name": user.githubId,
+            "lines_contributed": total_lines,
         })
 
     return result
@@ -107,7 +120,7 @@ async def get_top_users_for_language(
     result = []
     for user, total_commits in top_x:
         result.append({
-            "username": user.githubId,
+            "github_name": user.githubId,
             "total_commits": total_commits,
         })
 
