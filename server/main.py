@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI
 from routes import ranking
 from dotenv import load_dotenv
