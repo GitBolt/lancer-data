@@ -56,8 +56,8 @@ async def get_top_users_for_language(
 
     data = result.fetchall()
     output_data = [
-        {"github_name": name, "lines_contributed": lines_contributed, "user_id": user_id}
-        for _, (user_id, name, lines_contributed) in enumerate(sorted(data, key=lambda x: x[2], reverse=True), start=1)
+        {"github_name": name, "rank":rank, "lines_contributed": lines_contributed, "user_id": user_id}
+        for rank, (user_id, name, lines_contributed) in enumerate(sorted(data, key=lambda x: x[2], reverse=True), start=1)
     ]
    
     return output_data
