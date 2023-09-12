@@ -1,6 +1,6 @@
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
@@ -22,15 +22,17 @@ github_key = os.getenv("GH_KEY1")
 github_key2 = os.getenv("GH_KEY2")
 
 headers = {"Authorization": f"token {github_key}"}
+headers2 = {"Authorization": f"token {github_key2}"}
 
-def main():
+def main(today):
     with open('dev_data.json') as json_file:
         json_data = json.load(json_file)
 
         print("Devs Count: ", len(json_data))
 
         # Get today's date in UTC
-        today = datetime.utcnow().date()
+        if not today:
+            today = datetime.utcnow().date()
 
     for idx, user in enumerate(json_data):
         github_name = user["github_name"]
@@ -47,6 +49,13 @@ def main():
             url = f'https://api.github.com/users/{github_name}/events'
             response = requests.get(url, headers=headers)
             print(response)
+
+            if response.status_code != 200:
+                print("Using second token")
+                url = f'https://api.github.com/users/{github_name}/events'
+                response = requests.get(url, headers=headers2)
+
+
             events = response.json()
 
             today_commit_count = 0
@@ -99,12 +108,22 @@ def main():
 
     print("Done For Today: ", today)
 
-# Schedule the task to run every day at 3pm IST
-schedule.every().day.at("17:38").do(main)
 
-# Run the scheduled tasks
-print()
-print("Script Started. Server Time: ", datetime.utcnow())
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+today = datetime.utcnow().today()
+
+for i in range(40):
+    previous_day = today - timedelta(days=i)
+    print(previous_day.date())
+    main(previous_day.date())
+
+print("Finished for 40 days")
+
+# # Schedule the task to run every day at 3pm IST
+# schedule.every().day.at("00:00").do(main)
+
+# # Run the scheduled tasks
+# print()
+# print("Script Started. Server Time: ", datetime.utcnow())
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
