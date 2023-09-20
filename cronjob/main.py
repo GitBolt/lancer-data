@@ -109,21 +109,11 @@ def main(today):
     print("Done For Today: ", today)
 
 
-today = datetime.utcnow().today()
+schedule.every().day.at("00:00").do(main)
 
-for i in range(10):
-    previous_day = today - timedelta(days=i)
-    print(previous_day.date())
-    main(previous_day.date())
-
-print("Finished for 10 days")
-
-# # Schedule the task to run every day at 3pm IST
-# schedule.every().day.at("00:00").do(main)
-
-# # Run the scheduled tasks
-# print()
-# print("Script Started. Server Time: ", datetime.utcnow())
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+# Run the scheduled tasks
+print()
+print("Script Started. Server Time: ", datetime.utcnow())
+while True:
+    schedule.run_pending()
+    time.sleep(1)
