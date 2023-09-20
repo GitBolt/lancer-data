@@ -107,12 +107,19 @@ async def get_top_users_for_language(
 
     print(start, end_date)
 
-    top_x = (
-        session.query(User, func.sum(Contribution.total_commits))
-        .join(Contribution)
+    # Step 1: Create a subquery for summing up total_commits for each user within the date range.
+    subquery = (
+        session.query(Contribution.user_id.label('user_id'), func.sum(Contribution.total_commits).label('sum_commits'))
         .filter(Contribution.date >= start_date, Contribution.date <= end_date)
-        .group_by(User)
-        .order_by(func.sum(Contribution.total_commits).desc())
+        .group_by(Contribution.user_id)
+        .subquery()
+    )
+
+    # Step 2: Join this subquery with the User table and order the results.
+    top_x = (
+        session.query(User, subquery.c.sum_commits)
+        .join(subquery, User.id == subquery.c.user_id)
+        .order_by(subquery.c.sum_commits.desc())
         .limit(limit)
         .all()
     )

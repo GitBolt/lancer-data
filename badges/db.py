@@ -27,10 +27,10 @@ Base = declarative_base()
 
 def initialize_engine2() -> Callable:
     try:
-        return create_engine(os.environ["DB_URL_RELEASE"])
+        return create_engine(os.environ["DB_URL_BADGES"])
     except KeyError:
         print(
-            "'DB_URL_RELEASE' environment variable not found,",
+            "'DB_URL_BADGES' environment variable not found,",
             "creating 'db2.sql' locally...'"
             )
         return create_engine(

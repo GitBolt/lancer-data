@@ -111,12 +111,12 @@ def main(today):
 
 today = datetime.utcnow().today()
 
-for i in range(40):
+for i in range(10):
     previous_day = today - timedelta(days=i)
     print(previous_day.date())
     main(previous_day.date())
 
-print("Finished for 40 days")
+print("Finished for 10 days")
 
 # # Schedule the task to run every day at 3pm IST
 # schedule.every().day.at("00:00").do(main)
