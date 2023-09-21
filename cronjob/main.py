@@ -24,7 +24,7 @@ github_key2 = os.getenv("GH_KEY2")
 headers = {"Authorization": f"token {github_key}"}
 headers2 = {"Authorization": f"token {github_key2}"}
 
-def main(today):
+def main(today = None):
     with open('dev_data.json') as json_file:
         json_data = json.load(json_file)
 
