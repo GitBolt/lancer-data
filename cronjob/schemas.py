@@ -12,8 +12,8 @@ class User(Base):
     name = Column(String(100))
     email = Column(String(255))
     twitter = Column(String(50))
-    # website = Column(String(100))
-    # location = Column(String(100))
+    website = Column(String(100))
+    location = Column(String(100))
     createdAt = Column(Date, default=func.now())
 
 
