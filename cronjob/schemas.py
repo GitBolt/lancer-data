@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String(255))
     twitter = Column(String(50))
     website = Column(String(100))
-    location = Column(String(100))
+    # location = Column(String(100))
     createdAt = Column(Date, default=func.now())
 
 
@@ -25,7 +25,8 @@ class Contribution(Base):
   total_commits = Column(Integer)
   breakdown = Column(JSON)
   total_lines = Column(Integer)
-  date = Column(Date, default=datetime.utcnow)
+  date = Column(Date, default=None)
+  created_at = Column(Date, default=datetime.utcnow)
 
 
 # Base.metadata.create_all(engine)
