@@ -2,4 +2,4 @@
 data.json
 repos.csv
 __pycache__
-*.json
+temp.json

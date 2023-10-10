@@ -51,6 +51,7 @@ def main():
                 time.sleep(3600)
                 switched_key = False
                 print("[UPDATE]: Back alive, continuing script...")
+                continue
         else:
             switched_key = False
         
