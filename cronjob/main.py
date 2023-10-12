@@ -39,14 +39,16 @@ def main():
         contact_info = user["contact_info"]
         print("\nDev: ", github_name, f"Count: [{idx}]/{len(json_data)}")
 
-        url = f'https://api.github.com/users/{github_name}/events?per_page=100'
+        url = f'https://api.github.com/users/{github_name}/events?per_page=10'
         response = requests.get(url, headers=headers)
 
         if response.status_code != 200:
             switched_key = True
+            print(response.text)
             print("[WARNING] Got rate limited, using new API key now")
             response = requests.get(url, headers=headers2)
             if response.status_code != 200:
+                print(response.text)
                 print("[ERROR] Rate limited with second API key, taking an hour break")
                 time.sleep(3600)
                 switched_key = False
@@ -59,10 +61,14 @@ def main():
         
 
         push_events = [e for e in events if e["type"] == "PushEvent"]
-        print("Push Event Count: ", len(push_events))
+        # print("Push Event Count: ", len(push_events))
 
         for idx, event in enumerate(push_events):
             created_date = event["created_at"].split("T")[0]
+            today = datetime.now().date()
+            if (created_date != today):
+                continue
+        
             if created_date not in temp_data:
                 temp_data[created_date] = []
 
@@ -143,5 +149,8 @@ def main():
         
             session.commit()
 
-if __name__ == '__main__':
-    main()
+
+
+schedule.every().day.at("21:00", "Asia/Kolkata").do(main)
+while True:
+    schedule.run_pending()
