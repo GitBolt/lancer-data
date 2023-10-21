@@ -1,1 +1,61 @@
-{}
+{
+    "2023-10-13": [
+        {
+            "githubId": "mvines",
+            "contact_info": {
+                "website": null,
+                "twitter": null,
+                "email": null
+            },
+            "language_details": {
+                "rust": {
+                    "additions": 32,
+                    "deletions": 2
+                }
+            },
+            "commit_count": 2
+        }
+    ],
+    "2023-10-20": [
+        {
+            "githubId": "jeffwashington",
+            "contact_info": {
+                "website": null,
+                "twitter": null,
+                "email": "jeff.washington@solana.com"
+            },
+            "language_details": {
+                "rust": {
+                    "additions": 5998,
+                    "deletions": 5552
+                },
+                "shell script": {
+                    "additions": 40,
+                    "deletions": 0
+                },
+                "toml": {
+                    "additions": 3,
+                    "deletions": 2
+                }
+            },
+            "commit_count": 52
+        }
+    ],
+    "2023-10-19": [
+        {
+            "githubId": "jeffwashington",
+            "contact_info": {
+                "website": null,
+                "twitter": null,
+                "email": "jeff.washington@solana.com"
+            },
+            "language_details": {
+                "rust": {
+                    "additions": 2342,
+                    "deletions": 1643
+                }
+            },
+            "commit_count": 20
+        }
+    ]
+}

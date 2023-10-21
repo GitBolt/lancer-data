@@ -1,6 +1,6 @@
 import json
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as load_date
 import os
 from dotenv import load_dotenv
 from get_language_info import get_language_breakdown
@@ -37,11 +37,11 @@ def main():
     for idx, user in enumerate(json_data):
         github_name = user["github_name"]
         contact_info = user["contact_info"]
-        print("\nDev: ", github_name, f"Count: [{idx}]/{len(json_data)}")
+        print("\nDev: ", github_name, f"[{idx}]/{len(json_data)}")
 
-        url = f'https://api.github.com/users/{github_name}/events?per_page=10'
+        url = f'https://api.github.com/users/{github_name}/events?per_page=100'
         response = requests.get(url, headers=headers)
-
+        print(response)
         if response.status_code != 200:
             switched_key = True
             print(response.text)
@@ -61,12 +61,16 @@ def main():
         
 
         push_events = [e for e in events if e["type"] == "PushEvent"]
-        # print("Push Event Count: ", len(push_events))
+        print("Push Event Count For This Dev: ", len(push_events))
 
         for idx, event in enumerate(push_events):
             created_date = event["created_at"].split("T")[0]
-            today = datetime.now().date()
-            if (created_date != today):
+            parsed_created_date = datetime.strptime(created_date, '%Y-%m-%d').date()
+
+            yesterday = (datetime.now() - timedelta(days=1)).date()
+            last_fetched = load_date(2023, 10, 11)
+
+            if (parsed_created_date <= last_fetched):
                 continue
         
             if created_date not in temp_data:
@@ -149,8 +153,8 @@ def main():
         
             session.commit()
 
+main()
 
-
-schedule.every().day.at("21:00", "Asia/Kolkata").do(main)
-while True:
-    schedule.run_pending()
+# schedule.every().day.at("21:00", "Asia/Kolkata").do(main)
+# while True:
+#     schedule.run_pending()
